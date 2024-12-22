@@ -153,7 +153,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(48.dp))
+                    Spacer(modifier = Modifier.height(40.dp))
 
                     Button(
                         onClick = {

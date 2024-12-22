@@ -45,16 +45,23 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                     response.data.user?.let { saveToken(response.data.token, it.id) }
                     _loginStatus.value = LoginState.Success("Login Successful")
                 } else {
-                    _loginStatus.value = LoginState.Error("Invalid credentials")
+                    _loginStatus.value = LoginState.Error("Invalid username or password")
                 }
             } catch (e: Exception) {
-                _errorMessage.value = e.localizedMessage
-                _loginStatus.value = LoginState.Error(e.localizedMessage ?: "Unknown error occurred")
+                val userFriendlyMessage = when {
+                    e.message?.contains("404") == true -> "Invalid username or password"
+                    e.message?.contains("401") == true -> "Invalid username or password"
+                    e.message?.contains("500") == true -> "Server is currently unavailable. Please try again later."
+                    else -> "An unexpected error occurred. Please try again."
+                }
+                _errorMessage.value = userFriendlyMessage
+                _loginStatus.value = LoginState.Error(userFriendlyMessage)
             } finally {
                 _isLoading.value = false
             }
         }
     }
+
 
     private fun saveToken(token: String, userId: String) {
         sharedPreferences.edit().putString(KEY_USER_TOKEN, token).apply()
