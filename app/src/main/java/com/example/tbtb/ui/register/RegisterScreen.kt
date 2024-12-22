@@ -173,7 +173,7 @@ fun RegisterScreen(
                     singleLine = true
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(70.dp))
 
                 // Button "Create Account"
                 Button(
