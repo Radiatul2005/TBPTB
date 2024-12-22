@@ -28,7 +28,6 @@ import com.example.tbtb.ui.common.Screen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewModel()) {
-    // Existing state declarations remain the same
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
     val email = remember { mutableStateOf("") }
@@ -52,7 +51,6 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
         ) {
             Spacer(modifier = Modifier.height(48.dp))
 
-            // Larger logo
             Image(
                 painter = painterResource(id = R.drawable.logo_ur_app),
                 contentDescription = "Logo Unand Research",
@@ -77,12 +75,10 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
                 ) {
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    // Centered Login text
                     Text(
                         text = "Login",
-                        style = MaterialTheme.typography.headlineMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = MaterialTheme.typography.headlineLarge.fontSize
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.Bold
                         ),
                         color = Color.Black,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -90,7 +86,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
 
                     Spacer(modifier = Modifier.height(48.dp))
 
-                    // Updated Email field with underline only
+                    // Email Field
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             text = "Email",
@@ -102,20 +98,24 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
                             onValueChange = { email.value = it },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(48.dp),
+                                .padding(vertical = 4.dp),
                             colors = TextFieldDefaults.colors(
                                 unfocusedContainerColor = Color.Transparent,
                                 focusedContainerColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.LightGray,
                                 focusedIndicatorColor = Color(0xFF469C8F),
+                                cursorColor = Color(0xFF469C8F),
+                                unfocusedTextColor = Color.Black,
+                                focusedTextColor = Color.Black
                             ),
+                            textStyle = LocalTextStyle.current.copy(color = Color.Black),
                             singleLine = true
                         )
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Updated Password field with underline only
+                    // Password Field
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             text = "Password",
@@ -127,14 +127,18 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
                             onValueChange = { password.value = it },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(48.dp),
+                                .padding(vertical = 4.dp),
                             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                             colors = TextFieldDefaults.colors(
                                 unfocusedContainerColor = Color.Transparent,
                                 focusedContainerColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.LightGray,
                                 focusedIndicatorColor = Color(0xFF469C8F),
+                                cursorColor = Color(0xFF469C8F),
+                                unfocusedTextColor = Color.Black,
+                                focusedTextColor = Color.Black
                             ),
+                            textStyle = LocalTextStyle.current.copy(color = Color.Black),
                             singleLine = true,
                             trailingIcon = {
                                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -151,10 +155,8 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
 
                     Spacer(modifier = Modifier.height(48.dp))
 
-                    // Login button
                     Button(
                         onClick = {
-                            // Existing login logic remains the same
                             emailError = ""
                             passwordError = ""
                             if (!Patterns.EMAIL_ADDRESS.matcher(email.value).matches()) {
@@ -185,14 +187,28 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
                         }
                     }
 
-                    // Existing error handling and LaunchedEffect remain the same
+                    errorMessage?.let {
+                        Text(
+                            text = it,
+                            color = Color.Red,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+
                     LaunchedEffect(loginStatus) {
-                        // Existing login status handling
+                        if (loginStatus is LoginState.Success) {
+                            Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo("login") { inclusive = true }
+                                popUpTo("initialView") { inclusive = true }
+                            }
+                        } else if (loginStatus is LoginState.Error) {
+                            Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
+                        }
                     }
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    // Sign up section
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
